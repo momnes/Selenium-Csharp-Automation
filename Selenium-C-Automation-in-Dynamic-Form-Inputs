@@ -1,0 +1,68 @@
+using System;
+using System.Windows.Forms;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Support.UI;
+using System.Threading;
+
+namespace WindowsFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            EdgeOptions options = new EdgeOptions();
+
+            using (IWebDriver driver = new EdgeDriver(options))
+            {
+                try
+                {
+                    // Navigate to the NBI Clearance website
+                    string url = "https://clearance.nbi.gov.ph/";
+                    driver.Navigate().GoToUrl(url);
+                    driver.Manage().Window.Maximize();
+
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+                    // BUTTONS 
+                    IWebElement agreeButton = wait.Until(d => d.FindElement(By.XPath("//*[contains(text(), 'I AGREE')]")));
+                    agreeButton.Click();
+                    IWebElement closeButton = wait.Until(d => d.FindElement(By.XPath("//*[contains(text(), 'Close')]")));
+                    closeButton.Click();
+                    IWebElement close2Button = wait.Until(d => d.FindElement(By.XPath("//*[contains(text(), 'Close')]")));
+                    close2Button.Click();
+                    Thread.Sleep(2000);
+
+                    // FORM
+                    driver.FindElement(By.Name("fname")).SendKeys("Marjorie (DYNAMIC)");
+                    driver.FindElement(By.Name("lname")).SendKeys("Omnes (DYNAMIC)");
+                    driver.FindElement(By.Name("mobile")).SendKeys("09954376863 (DYNAMIC)");
+                    driver.FindElement(By.Name("clearance_id")).SendKeys("123456789 (DYNAMIC)");
+
+                    //DROPDOWN BDATE
+                    IWebElement yearDropdownElement = wait.Until(d => d.FindElement(By.Name("bday_year")));
+                    SelectElement yearDropdown = new SelectElement(yearDropdownElement);
+                    yearDropdown.SelectByText("1984");
+                    IWebElement monthDropdownElement = wait.Until(d => d.FindElement(By.Name("bday_month")));
+                    SelectElement monthDropdown = new SelectElement(monthDropdownElement);
+                    monthDropdown.SelectByText("May");
+                    IWebElement dayDropdownElement = wait.Until(d => d.FindElement(By.Name("bday_day")));
+                    SelectElement dayDropdown = new SelectElement(dayDropdownElement);
+                    dayDropdown.SelectByText("27");
+
+                    Thread.Sleep(9000);
+
+                }
+                finally
+                {
+                    driver.Quit();  
+                }
+            }
+        }
+    }
+}
